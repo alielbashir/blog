@@ -5,7 +5,7 @@ name: Python application
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
 
@@ -34,7 +34,7 @@ jobs:
         python -m pip install poetry
         # install all dependencies added to poetry
         poetry install --no-interaction
-        # poetry shell
+        poetry shell
         
     - name: Lint with black
       run: |
