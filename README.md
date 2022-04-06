@@ -1,13 +1,17 @@
 # blog
 A social network built with FastAPI, MongoDB, and Vue.js
 
-## Quickstart
+## Setup
 1. Clone the repo
 ```
 git clone https://github.com/alielbashir/blog
+cd blog
 ```
+
+### Backend
 2. Install poetry
 ```
+cd backend/app
 python3 - m pip install poetry
 ```
 3. Install the dependencies using poetry
