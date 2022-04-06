@@ -20,13 +20,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Install poetry and dependencies
+    - name: Install poetry
+      run: pipx install poetry
     - uses: actions/setup-python@v3
       with:
         python-version: "3.10"
         cache: "poetry"
     - run: |
-        pipx install poetry
         poetry install
     
     - name: Lint with black
