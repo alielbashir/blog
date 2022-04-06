@@ -6,9 +6,13 @@ A social network built with FastAPI, MongoDB, and Vue.js
 ```
 git clone https://github.com/alielbashir/blog
 ```
+
+### Backend
+
 2. Install poetry
 ```
-python3 - m pip install poetry
+cd backend/app
+python3 -m pip install poetry
 ```
 3. Install the dependencies using poetry and activate the venv
 ```
