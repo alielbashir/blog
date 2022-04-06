@@ -34,6 +34,7 @@ jobs:
         python -m pip install poetry
         # install all dependencies added to poetry
         poetry install --no-interaction
+        # poetry shell
         
     - name: Lint with black
       run: |
