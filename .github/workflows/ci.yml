@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 jobs:
-  lint-and-test:
+  lint-and-test-backend:
 
     runs-on: ubuntu-latest
 
@@ -23,6 +23,11 @@ jobs:
       uses: actions/setup-python@v3
       with:
         python-version: "3.10"
+    
+    - name: Enter backend app directory
+      run: |
+        cd backend/app/
+        
         
     - name: Install poetry and dependencies
       run: |
