@@ -10,9 +10,10 @@ git clone https://github.com/alielbashir/blog
 ```
 python3 - m pip install poetry
 ```
-3. Install the dependencies using poetry
+3. Install the dependencies using poetry and activate the venv
 ```
 poetry install
+poetry shell
 ```
 4. Run the server with uvicorn
 ```
