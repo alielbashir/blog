@@ -10,7 +10,6 @@ class Settings(BaseModel):
 
     # Security settings
     authjwt_secret_key = config("SECRET_KEY")
-    salt = config("SALT").encode()
 
     testing = config("TESTING", default=False, cast=bool)
 
