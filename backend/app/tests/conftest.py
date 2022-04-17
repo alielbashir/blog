@@ -1,6 +1,5 @@
 from typing import Iterator
 
-import pytest
 from asgi_lifespan import LifespanManager
 from decouple import config
 from fastapi import FastAPI
