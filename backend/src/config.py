@@ -15,3 +15,4 @@ class Settings(BaseModel):
 
 
 CONFIG = Settings()
+print("config set")

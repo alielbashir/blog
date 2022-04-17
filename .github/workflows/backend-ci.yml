@@ -11,7 +11,7 @@ permissions:
   
 defaults:
   run:
-    working-directory: ./backend/app
+    working-directory: ./backend/src
 
 jobs:
   lint-and-test:

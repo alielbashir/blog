@@ -6,18 +6,17 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 import pytest_asyncio
 
-from ..config import CONFIG
-
+from src.config import CONFIG
 
 # Override config settings before loading the app
 CONFIG.testing = True
 CONFIG.mongo_uri = config("TEST_MONGO_URI", default="mongodb://localhost:27017")
-
-from ..main import app
+from src.main import app
 
 
 async def clear_database(server: FastAPI) -> None:
     """Empties the test database"""
+    print(f"clearing db with name {server.db.name}")
     for collection in await server.db.list_collections():
         await server.db[collection["name"]].delete_many({})
 

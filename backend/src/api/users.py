@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from core.auth import AuthHandler
+from src.auth import AuthHandler
 
-from models.user import User, UserAuth, UserOut
+from src.models.user import User, UserAuth, UserOut
 
 auth_handler = AuthHandler()
 
