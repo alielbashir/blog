@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from api.users import router as usersRouter
 from models.user import User
 from config import CONFIG
 from beanie import init_beanie
@@ -18,3 +19,6 @@ async def init_app():
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+app.include_router(usersRouter)
