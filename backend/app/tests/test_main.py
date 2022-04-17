@@ -1,12 +1,10 @@
-from starlette.testclient import TestClient
-
-from ..main import app
-
-client = TestClient(app)
+from httpx import AsyncClient
+import pytest
 
 
-def test_root():
-    response = client.get("/")
-
+@pytest.mark.asyncio
+async def test_root(client: AsyncClient) -> None:
+    response = await client.get("/")
     assert response.status_code == 200
-    assert response.json()["message"] == "Hello World"
+    data = response.json()
+    assert data["message"] == "Hello World"
