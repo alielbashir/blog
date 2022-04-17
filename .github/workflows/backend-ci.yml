@@ -41,5 +41,7 @@ jobs:
         poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Test with pytest
+      env:
+        TEST_MONGO_URI: ${{secrets.TEST_MONGO_URI}}
       run: |
         poetry run pytest --asyncio-mode=strict
