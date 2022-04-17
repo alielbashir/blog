@@ -13,7 +13,8 @@ from src.config import CONFIG
 # Override config settings before loading the app
 CONFIG.testing = True
 CONFIG.mongo_uri = config("TEST_MONGO_URI", default="mongodb://localhost:27017")
-from src.main import app
+
+from src.main import app  # noqa: E402
 
 
 async def clear_database(server: FastAPI) -> None:
