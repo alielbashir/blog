@@ -1,9 +1,11 @@
+import asyncio
 from typing import Iterator
 
 from asgi_lifespan import LifespanManager
 from decouple import config
 from fastapi import FastAPI
 from httpx import AsyncClient
+import pytest
 import pytest_asyncio
 
 from src.config import CONFIG
@@ -21,7 +23,12 @@ async def clear_database(server: FastAPI) -> None:
         await server.db[collection["name"]].delete_many({})
 
 
-@pytest_asyncio.fixture()
+@pytest.fixture(scope="session")
+def event_loop():
+    return asyncio.get_event_loop()
+
+
+@pytest_asyncio.fixture(scope="session")
 async def client() -> Iterator[AsyncClient]:
     """Async server client that handles lifespan and teardown"""
     async with LifespanManager(app):
