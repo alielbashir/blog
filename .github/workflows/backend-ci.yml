@@ -11,7 +11,7 @@ permissions:
   
 defaults:
   run:
-    working-directory: ./backend/app
+    working-directory: ./backend
 
 jobs:
   lint-and-test:
@@ -24,7 +24,7 @@ jobs:
       run: pipx install poetry
     - uses: actions/setup-python@v3
       with:
-        python-version: "3.10"
+        python-version: "3.8"
         cache: "poetry"
     - run: |
         poetry install
@@ -41,5 +41,7 @@ jobs:
         poetry run flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Test with pytest
+      env:
+        TEST_MONGO_URI: ${{secrets.TEST_MONGO_URI}}
       run: |
-        poetry run pytest
+        poetry run pytest --asyncio-mode=strict
