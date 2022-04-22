@@ -1,6 +1,8 @@
 from httpx import AsyncClient
 import pytest
 
+from src.models.user import Scope
+
 
 @pytest.mark.asyncio
 async def test_root(client: AsyncClient) -> None:
@@ -23,3 +25,27 @@ async def test_new_user(client: AsyncClient) -> None:
     assert response.status_code == 200
     data = response.json()
     assert "token" in data
+
+@pytest.mark.asyncio
+async def test_new_user_with_default_scope(client: AsyncClient) -> None:
+    """checks that scope defaults to read when not specified"""
+    new_user = {"username": "terry", "password": "oldspice"}
+    response = await client.post("/users/register", json=new_user)
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["username"] == "terry"
+    assert data["scope"] == Scope.read
+
+@pytest.mark.asyncio
+async def test_new_user_with_write_scope(client: AsyncClient) -> None:
+    """checks that new user's scope is write when specified"""
+    new_user = {"username": "captainholt", "password": "cheddar", "scope": "write"}
+    response = await client.post("/users/register", json=new_user)
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["username"] == "captainholt"
+    assert data["scope"] == Scope.write
