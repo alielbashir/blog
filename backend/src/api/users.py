@@ -16,7 +16,9 @@ async def register(user_register: UserRegister):
     hashed_pass = auth_handler.get_password_hash(user_register.password)
 
     # replace plaintext pass with hashed pass
-    user = User(username=user_register.username, password=hashed_pass, scope=user_register.scope)
+    user = User(
+        username=user_register.username, password=hashed_pass, scope=user_register.scope
+    )
     await user.create()
 
     return user

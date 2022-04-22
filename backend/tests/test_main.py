@@ -26,6 +26,7 @@ async def test_new_user_login(client: AsyncClient) -> None:
     data = response.json()
     assert "token" in data
 
+
 @pytest.mark.asyncio
 async def test_new_user_with_default_scope(client: AsyncClient) -> None:
     """checks that scope defaults to read when not specified"""
@@ -37,6 +38,7 @@ async def test_new_user_with_default_scope(client: AsyncClient) -> None:
 
     assert data["username"] == "terry"
     assert data["scope"] == Scope.read
+
 
 @pytest.mark.asyncio
 async def test_new_user_with_write_scope(client: AsyncClient) -> None:
