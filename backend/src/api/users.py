@@ -32,6 +32,6 @@ async def login(user_auth: UserAuth):
         user_auth.password, user.password
     ):
         raise HTTPException(status_code=401, detail="Invalid username and/or password")
-    token = auth_handler.encode_token(user.username)
+    token = auth_handler.encode_token(user)
 
     return {"token": token}
