@@ -25,6 +25,8 @@ class User(Document):
     scope: Scope
 
 
-class UserOut(BaseModel):
+class UserNoPass(BaseModel):
+    """User without password"""
+
     username: str
     scope: Scope
