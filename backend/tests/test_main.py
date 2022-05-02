@@ -1,3 +1,4 @@
+import asyncio
 from httpx import AsyncClient
 import pytest
 
@@ -92,3 +93,19 @@ async def test_create_new_post_added_to_db(client: AsyncClient) -> None:
         f"/posts/{post_id}", headers={"Authorization": f"Bearer {token}"}
     )
     assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_get_new_posts(client: AsyncClient) -> None:
+    """checks that all new posts are added to db"""
+    token = await login_new_user(client, username="dougjudy", scope=Scope.write)
+
+    # create 5 new posts at once
+    await asyncio.gather(*[create_new_post(client, token) for _ in range(5)])
+
+    response = await client.get(f"/posts", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) >= 5
