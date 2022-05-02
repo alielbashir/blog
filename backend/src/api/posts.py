@@ -1,3 +1,4 @@
+from typing import List
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends
 from src.auth import AuthHandler
@@ -29,3 +30,13 @@ async def get_post(id):
 
     post = await Post.find_one(Post.id == PydanticObjectId(id))
     return get_post_with_timestamp(post)
+
+
+@router.get(
+    "",
+    status_code=200,
+    response_model=List[PostWithTimestamp],
+    dependencies=[Depends(auth_handler.authorized)],
+)
+async def get_posts():
+    return [get_post_with_timestamp(post) async for post in Post.find()]
