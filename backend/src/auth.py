@@ -6,6 +6,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
 from src.models.user import User, UserNoPass
+from src.config import CONFIG
 
 
 class AuthHandler:
@@ -13,7 +14,7 @@ class AuthHandler:
 
     security = HTTPBearer()
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    secret = "SECRET"
+    secret = CONFIG.authjwt_secret_key
 
     def get_password_hash(self, password):
         """returns hashed password"""
