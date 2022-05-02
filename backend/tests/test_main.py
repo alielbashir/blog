@@ -103,7 +103,7 @@ async def test_get_new_posts(client: AsyncClient) -> None:
     # create 5 new posts at once
     await asyncio.gather(*[create_new_post(client, token) for _ in range(5)])
 
-    response = await client.get(f"/posts", headers={"Authorization": f"Bearer {token}"})
+    response = await client.get("/posts", headers={"Authorization": f"Bearer {token}"})
 
     assert response.status_code == 200
     data = response.json()
