@@ -17,9 +17,12 @@ async def login_new_user(client: AsyncClient, username: str, scope: Scope) -> st
     return data["token"]
 
 
-async def create_new_post(client: AsyncClient, token: str) -> Response:
+async def create_new_post(
+    client: AsyncClient,
+    token: str,
+    new_post: dict = {"title": "test title", "content": "test content"},
+) -> Response:
     """Creates a new post and returns its response"""
-    new_post = {"title": "test title", "content": "test content"}
     response = await client.post(
         "/posts", json=new_post, headers={"Authorization": f"Bearer {token}"}
     )
