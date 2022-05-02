@@ -1,4 +1,4 @@
-from httpx import AsyncClient, post
+from httpx import AsyncClient
 import pytest
 
 from src.models.user import Scope

@@ -5,7 +5,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
 from datetime import datetime, timedelta
 
-from src.models.user import User, UserNoPass
+from src.models.user import Scope, User, UserNoPass
 from src.config import CONFIG
 
 
@@ -49,11 +49,22 @@ class AuthHandler:
         except jwt.InvalidAlgorithmError:
             raise HTTPException(status_code=401, detail="Invalid token")
 
-    def auth_wrapper(self, auth: HTTPAuthorizationCredentials = Security(security)):
+    def authorized(self, auth: HTTPAuthorizationCredentials = Security(security)):
         """
         dependency injection wrapper
         checks if http bearer exists through dependency injection, then decodes token and
         returns a UserNoPass object if a token exists
         """
-        print(f"Decoded user = {self.decode_token(auth.credentials)}")
-        return
+
+        return self.decode_token(auth.credentials)
+
+    def write_authorized(self, auth: HTTPAuthorizationCredentials = Security(security)):
+        """
+        dependency injection wrapper
+        authorizes user only if they have write scope
+        """
+        user = self.decode_token(auth.credentials)
+        if user.scope == Scope.write:
+            return user
+        else:
+            raise HTTPException(status_code=403, detail="Unauthorized")
