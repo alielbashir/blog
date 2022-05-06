@@ -1,7 +1,9 @@
+import asyncio
 from httpx import AsyncClient
 import pytest
 
 from src.models.user import Scope
+from tests.utils import create_new_post, login_new_user
 
 
 @pytest.mark.asyncio
@@ -51,3 +53,59 @@ async def test_new_user_with_write_scope(client: AsyncClient) -> None:
 
     assert data["username"] == "captainholt"
     assert data["scope"] == Scope.write
+
+
+@pytest.mark.asyncio
+async def test_create_new_post_with_permission(client: AsyncClient) -> None:
+    """checks that a new post is created when a user with write scope performs it"""
+    token = await login_new_user(client, username="rosadiaz", scope=Scope.write)
+
+    response = await create_new_post(client, token)
+
+    assert response.status_code == 201
+
+    data = response.json()
+
+    assert data["title"] == "test title"
+    assert data["content"] == "test content"
+    assert "id" in data
+
+
+@pytest.mark.asyncio
+async def test_create_new_post_without_permission(client: AsyncClient) -> None:
+    """checks that a 403 error is returned when a user without write scope tries to create a new post"""
+    token = await login_new_user(client, username="ginalinetti", scope=Scope.read)
+
+    response = await create_new_post(client, token)
+
+    assert response.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_create_new_post_added_to_db(client: AsyncClient) -> None:
+    """checks that new post is added to db when created"""
+    token = await login_new_user(client, username="pontiacbandit", scope=Scope.write)
+
+    response = await create_new_post(client, token)
+    post_id = response.json()["id"]
+
+    response = await client.get(
+        f"/posts/{post_id}", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_get_new_posts(client: AsyncClient) -> None:
+    """checks that all new posts are added to db"""
+    token = await login_new_user(client, username="dougjudy", scope=Scope.write)
+
+    # create 5 new posts at once
+    await asyncio.gather(*[create_new_post(client, token) for _ in range(5)])
+
+    response = await client.get("/posts", headers={"Authorization": f"Bearer {token}"})
+
+    assert response.status_code == 200
+    data = response.json()
+
+    assert len(data) >= 5
