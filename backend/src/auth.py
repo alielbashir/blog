@@ -1,12 +1,12 @@
-import jwt
+from datetime import datetime, timedelta
 
+import jwt
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
 
-from src.models.user import Scope, User, UserNoPass
 from src.config import CONFIG
+from src.models.user import Scope, User, UserNoPass
 
 
 class AuthHandler:
