@@ -1,11 +1,10 @@
-from fastapi import FastAPI
-from src.models.post import Post
-
-from src.models.user import User
-from src.config import CONFIG
 from beanie import init_beanie
+from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from src.config import CONFIG
+from src.models.post import Post
+from src.models.user import User
 
 app = FastAPI()
 

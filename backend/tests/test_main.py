@@ -1,6 +1,7 @@
 import asyncio
-from httpx import AsyncClient
+
 import pytest
+from httpx import AsyncClient
 
 from src.models.user import Scope
 from tests.utils import create_new_post, login_new_user
