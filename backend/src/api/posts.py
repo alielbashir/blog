@@ -22,6 +22,16 @@ async def create_post(post: BasePost, user=Depends(auth_handler.write_authorized
 
 
 @router.get(
+    "",
+    status_code=200,
+    response_model=List[PostWithTimestamp],
+    dependencies=[Depends(auth_handler.authorized)],
+)
+async def get_posts():
+    return [get_post_with_timestamp(post) async for post in Post.find()]
+
+
+@router.get(
     "/{id}",
     status_code=200,
     response_model=PostWithTimestamp,
@@ -32,13 +42,3 @@ async def get_post(id):
 
     post = await Post.find_one(Post.id == PydanticObjectId(id))
     return get_post_with_timestamp(post)
-
-
-@router.get(
-    "",
-    status_code=200,
-    response_model=List[PostWithTimestamp],
-    dependencies=[Depends(auth_handler.authorized)],
-)
-async def get_posts():
-    return [get_post_with_timestamp(post) async for post in Post.find()]
