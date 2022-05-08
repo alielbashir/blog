@@ -3,11 +3,9 @@ from typing import List
 from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends
 
-from src.auth import AuthHandler
+from src.auth import auth_handler
 from src.models.post import BasePost, Post, PostWithTimestamp, get_post_with_timestamp
 
-# FIXME: consider way to have this as singleton and not instantiate every time in different files
-auth_handler = AuthHandler()
 
 router = APIRouter(prefix="/posts")
 
