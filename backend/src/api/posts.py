@@ -6,7 +6,6 @@ from fastapi import APIRouter, Depends
 from src.auth import auth_handler
 from src.models.post import BasePost, Post, PostWithTimestamp, get_post_with_timestamp
 
-
 router = APIRouter(prefix="/posts")
 
 

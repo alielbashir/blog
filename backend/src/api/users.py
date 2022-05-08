@@ -3,7 +3,6 @@ from fastapi import APIRouter, HTTPException
 from src.auth import auth_handler
 from src.models.user import User, UserAuth, UserNoPass, UserRegister
 
-
 router = APIRouter(prefix="/users")
 
 
