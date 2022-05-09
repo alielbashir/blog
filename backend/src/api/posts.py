@@ -1,6 +1,5 @@
 from typing import List
 
-from beanie import PydanticObjectId
 from fastapi import APIRouter, Depends
 
 from src.auth import auth_handler
@@ -23,7 +22,7 @@ async def create_post(post: BasePost, user=Depends(auth_handler.write_authorized
     dependencies=[Depends(auth_handler.authorized)],
 )
 async def get_posts():
-    return [get_post_with_timestamp(post) async for post in Post.find()]
+    return [get_post_with_timestamp(post) async for post in Post.find_all()]
 
 
 @router.get(
@@ -35,5 +34,5 @@ async def get_posts():
 async def get_post(id):
     print(f"id: {id}")
 
-    post = await Post.find_one(Post.id == PydanticObjectId(id))
+    post = await Post.get(id)
     return get_post_with_timestamp(post)
