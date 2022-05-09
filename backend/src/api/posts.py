@@ -11,9 +11,7 @@ router = APIRouter(prefix="/posts")
 
 @router.post("", status_code=201, response_model=PostWithTimestamp)
 async def create_post(post: BasePost, user=Depends(auth_handler.write_authorized)):
-    post = Post(
-        username=user.username, title=post.title, content=post.content, votes=post.votes
-    )
+    post = Post(username=user.username, title=post.title, content=post.content)
     await post.create()
     return get_post_with_timestamp(post)
 

@@ -1,3 +1,5 @@
+from typing import List
+
 from beanie import Document
 from pydantic import BaseModel
 
@@ -14,6 +16,8 @@ class Post(Document, BasePost):
     """A post saved in the database"""
 
     username: str
+    upvoters: List[str] = []
+    downvoters: List[str] = []
 
 
 class PostWithTimestamp(BasePost):
