@@ -68,3 +68,6 @@ class AuthHandler:
             return user
         else:
             raise HTTPException(status_code=403, detail="Unauthorized")
+
+
+auth_handler = AuthHandler()

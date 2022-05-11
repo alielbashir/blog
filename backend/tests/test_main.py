@@ -110,3 +110,138 @@ async def test_get_new_posts(client: AsyncClient) -> None:
     data = response.json()
 
     assert len(data) >= 5
+
+
+@pytest.mark.asyncio
+async def test_upvote_then_downvote_post(client: AsyncClient) -> None:
+    """checks that an upvote then a downvote results in a post with -1 vote"""
+    token = await login_new_user(client, username="scully", scope=Scope.write)
+
+    # create a new post
+    response = await create_new_post(client, token)
+    post_id = response.json()["id"]
+
+    # upvote the post
+    await client.post(
+        f"/posts/{post_id}/upvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    # downvote the post
+    response = await client.post(
+        f"/posts/{post_id}/downvote", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert response.status_code == 200
+
+    data = response.json()
+    assert data["votes"] == -1
+
+
+@pytest.mark.asyncio
+async def test_downvote_then_upvote_post(client: AsyncClient) -> None:
+    """checks that a downvote then an upvote results in a post with 1 vote"""
+    token = await login_new_user(client, username="pimento", scope=Scope.write)
+
+    # create a new post
+    response = await create_new_post(client, token)
+    post_id = response.json()["id"]
+
+    # downvote the post
+    await client.post(
+        f"/posts/{post_id}/downvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    # upvote the post
+    response = await client.post(
+        f"/posts/{post_id}/upvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    data = response.json()
+    assert data["votes"] == 1
+
+
+@pytest.mark.asyncio
+async def test_upvote_then_upvote_post(client: AsyncClient) -> None:
+    """checks that an upvote then an upvote undos the first upvote (and keeps the same vote count)"""
+    token = await login_new_user(client, username="hitchcock", scope=Scope.write)
+
+    # create a new post
+    response = await create_new_post(client, token)
+    post_id = response.json()["id"]
+
+    # upvote the post
+    await client.post(
+        f"/posts/{post_id}/upvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    # upvote the post again
+    response = await client.post(
+        f"/posts/{post_id}/upvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["votes"] == 0
+
+
+@pytest.mark.asyncio
+async def test_downvote_then_downvote_post(client: AsyncClient) -> None:
+    """checks that a downvote then a downvote undos the first downvote (and keeps the same vote count)"""
+    token = await login_new_user(client, username="hitchcock", scope=Scope.write)
+
+    # create a new post
+    response = await create_new_post(client, token)
+    post_id = response.json()["id"]
+
+    # downvote the post
+    await client.post(
+        f"/posts/{post_id}/downvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    # downvote the post again
+    response = await client.post(
+        f"/posts/{post_id}/downvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert data["votes"] == 0
+
+
+@pytest.mark.asyncio
+async def test_upvote_post(client: AsyncClient) -> None:
+    """checks that an upvote results in a post with 1 vote"""
+    token = await login_new_user(client, username="boyle", scope=Scope.write)
+
+    # create a new post
+    response = await create_new_post(client, token)
+    post_id = response.json()["id"]
+
+    # upvote the post
+    response = await client.post(
+        f"/posts/{post_id}/upvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["votes"] == 1
+
+
+@pytest.mark.asyncio
+async def test_downvote_post(client: AsyncClient) -> None:
+    """checks that a downvote results in a post with -1 vote"""
+    token = await login_new_user(client, username="teddywells", scope=Scope.write)
+
+    # create a new post
+    response = await create_new_post(client, token)
+    post_id = response.json()["id"]
+
+    # upvote the post
+    response = await client.post(
+        f"/posts/{post_id}/downvote", headers={"Authorization": f"Bearer {token}"}
+    )
+
+    assert response.status_code == 200
+    assert response.json()["votes"] == -1
