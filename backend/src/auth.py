@@ -1,9 +1,12 @@
-import jwt
+from datetime import datetime, timedelta
 
+import jwt
 from fastapi import HTTPException, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from passlib.context import CryptContext
-from datetime import datetime, timedelta
+
+from src.config import CONFIG
+from src.models.user import Scope, User, UserNoPass
 
 
 class AuthHandler:
@@ -11,7 +14,7 @@ class AuthHandler:
 
     security = HTTPBearer()
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-    secret = "SECRET"
+    secret = CONFIG.authjwt_secret_key
 
     def get_password_hash(self, password):
         """returns hashed password"""
@@ -21,23 +24,24 @@ class AuthHandler:
         """checks if plain password and hashed password match"""
         return self.pwd_context.verify(plain_password, hashed_password)
 
-    def encode_token(self, user_id):
-        """encodes JWT according to user id"""
+    def encode_token(self, user: User) -> str:
+        """encodes JWT according to user id and scopes"""
         payload = {
             "exp": datetime.utcnow() + timedelta(days=0, hours=2),
             "iat": datetime.utcnow(),
-            "sub": user_id,
+            "sub": user.username,
+            "scope": user.scope,
         }
         return jwt.encode(payload, self.secret, algorithm="HS256")
 
-    def decode_token(self, token):
+    def decode_token(self, token: str) -> UserNoPass:
         """
-        decodes JWT and returns token subject if valid
-        returns 401 http exception if invalid or expired token
+        decodes JWT and returns a UserNoPass object
+        raises 401 http exception if invalid or expired token
         """
         try:
             payload = jwt.decode(token, self.secret, algorithms=["HS256"])
-            return payload["sub"]
+            return UserNoPass(username=payload["sub"], scope=payload["scope"])
         except jwt.ExpiredSignatureError:
             raise HTTPException(
                 status_code=401, detail="Expired token. Please renew the token"
@@ -45,9 +49,25 @@ class AuthHandler:
         except jwt.InvalidAlgorithmError:
             raise HTTPException(status_code=401, detail="Invalid token")
 
-    def auth_wrapper(self, auth: HTTPAuthorizationCredentials = Security(security)):
+    def authorized(self, auth: HTTPAuthorizationCredentials = Security(security)):
         """
         dependency injection wrapper
-        checks if http bearer exists through dependency injection, then decodes token if it exists
+        checks if http bearer exists through dependency injection, then decodes token and
+        returns a UserNoPass object if a token exists
         """
+
         return self.decode_token(auth.credentials)
+
+    def write_authorized(self, auth: HTTPAuthorizationCredentials = Security(security)):
+        """
+        dependency injection wrapper
+        authorizes user only if they have write scope
+        """
+        user = self.decode_token(auth.credentials)
+        if user.scope == Scope.write:
+            return user
+        else:
+            raise HTTPException(status_code=403, detail="Unauthorized")
+
+
+auth_handler = AuthHandler()

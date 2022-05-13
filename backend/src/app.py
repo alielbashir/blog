@@ -1,10 +1,10 @@
-from fastapi import FastAPI
-
-from src.models.user import User
-from src.config import CONFIG
 from beanie import init_beanie
+from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 
+from src.config import CONFIG
+from src.models.post import Post
+from src.models.user import User
 
 app = FastAPI()
 
@@ -17,7 +17,7 @@ async def init_app():
     print(f"config testing = {CONFIG.testing}")
     app.db = AsyncIOMotorClient(CONFIG.mongo_uri)[dbname]
 
-    await init_beanie(app.db, document_models=[User])
+    await init_beanie(app.db, document_models=[User, Post])
 
 
 @app.get("/")

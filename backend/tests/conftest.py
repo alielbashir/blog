@@ -1,12 +1,12 @@
 import asyncio
 from typing import Iterator
 
+import pytest
+import pytest_asyncio
 from asgi_lifespan import LifespanManager
 from decouple import config
 from fastapi import FastAPI
 from httpx import AsyncClient
-import pytest
-import pytest_asyncio
 
 from src.config import CONFIG
 
