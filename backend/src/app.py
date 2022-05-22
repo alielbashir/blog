@@ -24,7 +24,7 @@ async def init_app():
     def random_str():
         """create random string to prevent collisions during parallel testing"""
         alphabet = "abcdefghijklmnopqrstuvwxyz"
-        return ''.join(random.choices(alphabet, k=8))
+        return "".join(random.choices(alphabet, k=8))
 
     # FIXME: change config in the future
     dbname = random_str() if CONFIG.testing else "prod"
