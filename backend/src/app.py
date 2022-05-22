@@ -1,3 +1,4 @@
+import random
 from beanie import init_beanie
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -20,8 +21,13 @@ app.add_middleware(
 
 @app.on_event("startup")
 async def init_app():
+    def random_str():
+        """create random string to prevent collisions during parallel testing"""
+        alphabet = "abcdefghijklmnopqrstuvwxyz"
+        return ''.join(random.choices(alphabet, k=8))
+
     # FIXME: change config in the future
-    dbname = "test" if CONFIG.testing else "prod"
+    dbname = random_str() if CONFIG.testing else "prod"
     print(f"dbname = {dbname}")
     print(f"config testing = {CONFIG.testing}")
     app.db = AsyncIOMotorClient(CONFIG.mongo_uri)[dbname]
