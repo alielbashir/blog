@@ -9,36 +9,35 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const usernameModel = ref("");
 const passwordModel = ref("");
+const confirmPasswordModel = ref("");
 
-const login = async () => {
-  if (passwordModel.value.length === 0) {
+const register = async () => {
+  if (passwordModel.value !== confirmPasswordModel.value) {
     alert("Passwords do not match");
     return;
   }
 
   try {
-    const res = await axios.post(`${API_URL}/users/login`, {
+    const res = await axios.post(`${API_URL}/users/register`, {
       username: usernameModel.value,
       password: passwordModel.value,
     });
-
-    // store token in session storage
-
-    sessionStorage.token = res.data.token;
-    router.push("dashboard");
+    if (res.status === 201) {
+      router.push("/");
+    }
   } catch (error) {
-    alert("Incorrect username and/or password");
+    alert("Sign up failed");
+    console.log(error.response.data.error);
   }
 };
 </script>
 
 <template>
   <main>
-    <form @submit.prevent="login">
-      <h1>Please sign in</h1>
+    <form @submit.prevent="register">
+      <h1>Please sign up</h1>
       <div>
         <input
-          id="floatingInput"
           type="text"
           required
           placeholder="Username"
@@ -47,16 +46,22 @@ const login = async () => {
       </div>
       <div>
         <input
-          id="floatingPassword"
           type="password"
           required
           placeholder="Password"
           v-model="passwordModel"
         />
       </div>
-
-      <button type="submit">Sign in</button>
+      <div>
+        <input
+          type="password"
+          required
+          placeholder="Confirm Password"
+          v-model="confirmPasswordModel"
+        />
+      </div>
+      <button type="submit">Sign up</button>
     </form>
-    <button @click="router.push('register')">Create an account</button>
+    <button @click="router.push('/')">Already have an account? Sign in</button>
   </main>
 </template>
