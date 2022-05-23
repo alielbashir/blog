@@ -24,6 +24,7 @@ class PostWithTimestamp(BasePost):
     """A post returned to the user with a timestamp and id"""
 
     id: str
+    username: str
     creation_date: int
     has_upvoted: bool = False
     has_downvoted: bool = False
