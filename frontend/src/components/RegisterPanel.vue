@@ -10,6 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 const usernameModel = ref("");
 const passwordModel = ref("");
 const confirmPasswordModel = ref("");
+const writeScopeModel = ref(false);
 
 const register = async () => {
   if (passwordModel.value !== confirmPasswordModel.value) {
@@ -21,6 +22,7 @@ const register = async () => {
     const res = await axios.post(`${API_URL}/users/register`, {
       username: usernameModel.value,
       password: passwordModel.value,
+      scope: writeScopeModel.value ? "write" : "read",
     });
     if (res.status === 201) {
       router.push("/");
@@ -59,6 +61,11 @@ const register = async () => {
           placeholder="Confirm Password"
           v-model="confirmPasswordModel"
         />
+      </div>
+
+      <div>
+        <input type="checkbox" id="checkbox" v-model="writeScopeModel" />
+        <label for="checkbox">I'm a writer</label>
       </div>
       <button type="submit">Sign up</button>
     </form>
