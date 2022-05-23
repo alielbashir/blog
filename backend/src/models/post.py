@@ -25,6 +25,8 @@ class PostWithTimestamp(BasePost):
 
     id: str
     creation_date: int
+    has_upvoted: bool = False
+    has_downvoted: bool = False
 
 
 def get_post_with_timestamp(post: Post):
@@ -35,4 +37,6 @@ def get_post_with_timestamp(post: Post):
         content=post.content,
         creation_date=int(post.id.generation_time.timestamp()),
         votes=post.votes,
+        has_downvoted=post.downvoters is not None and post.username in post.downvoters,
+        has_upvoted=post.upvoters is not None and post.username in post.upvoters,
     )
