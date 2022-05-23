@@ -13,7 +13,7 @@ router = APIRouter(prefix="/posts")
 async def create_post(post: BasePost, user=Depends(auth_handler.write_authorized)):
     post = Post(username=user.username, title=post.title, content=post.content)
     await post.create()
-    return get_post_with_timestamp(post)
+    return get_post_with_timestamp(post, requester_username=user.username)
 
 
 @router.get(
@@ -22,8 +22,11 @@ async def create_post(post: BasePost, user=Depends(auth_handler.write_authorized
     response_model=List[PostWithTimestamp],
     dependencies=[Depends(auth_handler.authorized)],
 )
-async def get_posts():
-    return [get_post_with_timestamp(post) async for post in Post.find_all()]
+async def get_posts(user=Depends(auth_handler.authorized)):
+    return [
+        get_post_with_timestamp(post, requester_username=user.username)
+        async for post in Post.find_all()
+    ]
 
 
 @router.get(
@@ -32,11 +35,11 @@ async def get_posts():
     response_model=PostWithTimestamp,
     dependencies=[Depends(auth_handler.authorized)],
 )
-async def get_post(id):
+async def get_post(id, user=Depends(auth_handler.authorized)):
     print(f"id: {id}")
 
     post = await Post.get(id)
-    return get_post_with_timestamp(post)
+    return get_post_with_timestamp(post, requester_username=user.username)
 
 
 @router.post(
@@ -68,7 +71,12 @@ async def upvote_post(
         post.votes += 1
 
     await post.save()
-    return get_post_with_timestamp(post)
+
+    print(f"downvoters = {post.downvoters}")
+    print(f"upvoters = {post.upvoters}")
+    new_post = get_post_with_timestamp(post, requester_username=user.username)
+    print(f"new_post: {new_post}")
+    return new_post
 
 
 @router.post(
@@ -100,4 +108,8 @@ async def downvote_post(
         post.votes -= 1
 
     await post.save()
-    return get_post_with_timestamp(post)
+    print(f"downvoters = {post.downvoters}")
+    print(f"upvoters = {post.upvoters}")
+    new_post = get_post_with_timestamp(post, requester_username=user.username)
+    print(f"new_post: {new_post}")
+    return new_post
