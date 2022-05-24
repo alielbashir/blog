@@ -72,11 +72,7 @@ async def upvote_post(
 
     await post.save()
 
-    print(f"downvoters = {post.downvoters}")
-    print(f"upvoters = {post.upvoters}")
-    new_post = get_post_with_timestamp(post, requester_username=user.username)
-    print(f"new_post: {new_post}")
-    return new_post
+    return get_post_with_timestamp(post, requester_username=user.username)
 
 
 @router.post(
@@ -108,8 +104,4 @@ async def downvote_post(
         post.votes -= 1
 
     await post.save()
-    print(f"downvoters = {post.downvoters}")
-    print(f"upvoters = {post.upvoters}")
-    new_post = get_post_with_timestamp(post, requester_username=user.username)
-    print(f"new_post: {new_post}")
-    return new_post
+    return get_post_with_timestamp(post, requester_username=user.username)
