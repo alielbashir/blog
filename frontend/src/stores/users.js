@@ -1,11 +1,14 @@
 import axios from "axios";
 import { defineStore } from "pinia";
+import { useSessionStorage } from "@vueuse/core";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const useUsersStore = defineStore("user", {
   state: () => ({
-    username: "",
-    isWriter: false,
+    username: useSessionStorage("username", ""),
+    isWriter: useSessionStorage("isWriter", false),
+    token: useSessionStorage("token", ""),
   }),
   actions: {
     async loginUser(username, password) {
@@ -22,9 +25,7 @@ export const useUsersStore = defineStore("user", {
 
       this.username = data.username;
       this.isWriter = data.scope === "write";
-
-      // store token in session storage
-      sessionStorage.token = data.token;
+      this.token = data.token;
     },
     async registerUser(username, password, writeScope) {
       await axios.post(`${API_URL}/users/register`, {
