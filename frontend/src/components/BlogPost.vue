@@ -110,7 +110,7 @@ const downvote = async () => {
 </script>
 
 <template>
-  <section>
+  <article>
     <table cellspacing="0" cellpadding="0">
       <tr>
         <td>
@@ -145,7 +145,8 @@ const downvote = async () => {
       {{ post.content }}
     </p>
     <p>{{ millisecondsToStr(post.creation_date) }} ago</p>
-  </section>
+  </article>
+  <br />
 </template>
 
 <style>
@@ -162,5 +163,9 @@ button {
 
 .voted {
   background-color: orange;
+}
+
+article {
+  word-wrap: break-word;
 }
 </style>
