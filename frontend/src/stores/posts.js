@@ -15,5 +15,20 @@ export const usePostsStore = defineStore("posts", {
       });
       this.posts = data;
     },
+    async createPost(title, content) {
+      const { newPost } = await axios.post(
+        `${API_URL}/posts`,
+        {
+          title: title,
+          content: content,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + sessionStorage.token,
+          },
+        }
+      );
+      this.posts.push(newPost);
+    },
   },
 });
