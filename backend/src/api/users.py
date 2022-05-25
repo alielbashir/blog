@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from src.auth import auth_handler
-from src.models.user import User, UserAuth, UserNoPass, UserRegister
+from src.models.user import User, UserAuth, UserLoginResponse, UserNoPass, UserRegister
 
 router = APIRouter(prefix="/users")
 
@@ -22,7 +22,7 @@ async def register(user_register: UserRegister):
     return user
 
 
-@router.post("/login")
+@router.post("/login", response_model=UserLoginResponse)
 async def login(user_auth: UserAuth):
     user = await User.find_one(User.username == user_auth.username)
 
@@ -32,4 +32,4 @@ async def login(user_auth: UserAuth):
         raise HTTPException(status_code=401, detail="Invalid username and/or password")
     token = auth_handler.encode_token(user)
 
-    return {"token": token}
+    return UserLoginResponse(username=user.username, scope=user.scope, token=token)
