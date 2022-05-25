@@ -7,9 +7,10 @@ const API_URL = import.meta.env.VITE_API_URL;
 export const usePostsStore = defineStore("posts", {
   state: () => ({
     posts: useSessionStorage("posts", []),
+    updatingToggle: false, // toggle to watch for updates
   }),
   actions: {
-    async getPosts() {
+    async fetchPosts() {
       const { token } = useUsersStore();
       const { data } = await axios.get(`${API_URL}/posts`, {
         headers: {
@@ -23,7 +24,7 @@ export const usePostsStore = defineStore("posts", {
       console.log(`content = ${content}`);
 
       const { token } = useUsersStore();
-      const { newPost } = await axios.post(
+      await axios.post(
         `${API_URL}/posts`,
         {
           title: title,
@@ -35,7 +36,25 @@ export const usePostsStore = defineStore("posts", {
           },
         }
       );
-      this.posts.push(newPost);
+      this.updatingToggle = !this.updatingToggle;
+    },
+  },
+  getters: {
+    dateSortedPosts(state) {
+      if (state.posts.length < 2) {
+        return state.posts;
+      }
+      return [...state.posts].sort((a, b) => {
+        return b.creation_date - a.creation_date;
+      });
+    },
+    voteSortedPosts(state) {
+      if (state.posts.length < 2) {
+        return state.posts;
+      }
+      return [...state.posts].sort((a, b) => {
+        return b.votes - a.votes;
+      });
     },
   },
 });
