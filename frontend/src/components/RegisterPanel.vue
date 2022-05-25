@@ -1,16 +1,14 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
 import router from "../router";
-
-// FIXME: find way to store this globally
-//        maybe use state management framework (pinia?)
-const API_URL = import.meta.env.VITE_API_URL;
+import { useUsersStore } from "../stores/users";
 
 const usernameModel = ref("");
 const passwordModel = ref("");
 const confirmPasswordModel = ref("");
 const writeScopeModel = ref(false);
+
+const { registerUser } = useUsersStore();
 
 const register = async () => {
   if (passwordModel.value !== confirmPasswordModel.value) {
@@ -19,17 +17,18 @@ const register = async () => {
   }
 
   try {
-    const res = await axios.post(`${API_URL}/users/register`, {
-      username: usernameModel.value,
-      password: passwordModel.value,
-      scope: writeScopeModel.value ? "write" : "read",
-    });
-    if (res.status === 201) {
-      router.push("/");
-    }
+    await registerUser(
+      usernameModel.value,
+      passwordModel.value,
+      writeScopeModel.value
+    );
   } catch (error) {
-    alert("Sign up failed");
-    console.log(error.response.data.error);
+    if (error.response.status === 400) {
+      alert("Username already exists");
+    } else {
+      console.log(error.response.status);
+      alert("Something went wrong");
+    }
   }
 };
 </script>

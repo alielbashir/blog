@@ -4,8 +4,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export const useUsersStore = defineStore("user", {
   state: () => ({
-    username: String,
-    scope: String,
+    username: "",
+    isWriter: false,
   }),
   actions: {
     async loginUser(username, password) {
@@ -21,10 +21,17 @@ export const useUsersStore = defineStore("user", {
       });
 
       this.username = data.username;
-      this.scope = data.scope;
+      this.isWriter = data.scope === "write";
 
       // store token in session storage
       sessionStorage.token = data.token;
+    },
+    async registerUser(username, password, writeScope) {
+      await axios.post(`${API_URL}/users/register`, {
+        username: username,
+        password: password,
+        scope: writeScope ? "write" : "read",
+      });
     },
   },
 });
