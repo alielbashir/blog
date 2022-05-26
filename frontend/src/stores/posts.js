@@ -42,7 +42,7 @@ export const usePostsStore = defineStore("posts", {
   getters: {
     dateSortedPosts(state) {
       if (state.posts.length < 2) {
-        return state.posts;
+        return [...state.posts];
       }
       return [...state.posts].sort((a, b) => {
         return b.creation_date - a.creation_date;
@@ -50,7 +50,7 @@ export const usePostsStore = defineStore("posts", {
     },
     voteSortedPosts(state) {
       if (state.posts.length < 2) {
-        return state.posts;
+        return [...state.posts];
       }
       return [...state.posts].sort((a, b) => {
         return b.votes - a.votes;

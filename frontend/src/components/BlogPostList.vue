@@ -3,32 +3,29 @@ import { storeToRefs } from "pinia";
 import { usePostsStore } from "../stores/posts";
 import BlogPost from "../components/BlogPost.vue";
 import { watch, ref } from "vue";
-import { computed } from "@vue/reactivity";
 
 const store = usePostsStore();
 
-const { updatingToggle, posts } = storeToRefs(store);
+const { updatingToggle, posts, voteSortedPosts, dateSortedPosts } =
+  storeToRefs(store);
 
 const { fetchPosts } = store;
 
 const sortModel = ref("date");
-const sortOrderModel = ref("desc");
-
-const dateSortedPosts = computed(() => store.dateSortedPosts);
-const voteSortedPosts = computed(() => store.voteSortedPosts);
+const sortOrderModel = ref("asc");
 
 watch([sortModel, sortOrderModel], () => {
   switch (sortModel.value) {
     case "votes":
       posts.value =
         sortOrderModel.value === "desc"
-          ? voteSortedPosts.value
+          ? [...voteSortedPosts.value]
           : [...voteSortedPosts.value].reverse();
       break;
     case "date":
       posts.value =
         sortOrderModel.value === "desc"
-          ? dateSortedPosts.value
+          ? [...dateSortedPosts.value]
           : [...dateSortedPosts.value].reverse();
       break;
     default:
