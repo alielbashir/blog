@@ -1,7 +1,7 @@
 <script setup>
 import CreatePostPanel from "../components/CreatePostPanel.vue";
 import BlogPostList from "../components/BlogPostList.vue";
-
+import LogoutButton from "../components/LogoutButton.vue";
 import { useUsersStore } from "../stores/users";
 
 const user = useUsersStore();
@@ -13,5 +13,6 @@ const user = useUsersStore();
 
     <CreatePostPanel v-if="user.isWriter" />
     <BlogPostList />
+    <LogoutButton />
   </div>
 </template>
