@@ -27,6 +27,12 @@ export const useUsersStore = defineStore("user", {
       this.isWriter = data.scope === "write";
       this.token = data.token;
     },
+    logoutUser() {
+      this.username = "";
+      this.isWriter = false;
+      this.token = "";
+      console.log("state reset for user");
+    },
     async registerUser(username, password, writeScope) {
       await axios.post(`${API_URL}/users/register`, {
         username: username,
