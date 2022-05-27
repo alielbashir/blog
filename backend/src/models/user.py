@@ -31,3 +31,9 @@ class UserNoPass(BaseModel):
 
     username: str
     scope: Scope
+
+
+class UserLoginResponse(UserNoPass):
+    """User with token"""
+
+    token: str
