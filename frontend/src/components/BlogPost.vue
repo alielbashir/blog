@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import axios from "axios";
+import { useUsersStore } from "../stores/users";
 
 const props = defineProps({
   post: {
@@ -12,6 +13,7 @@ const props = defineProps({
     votes: Number,
   },
 });
+const { token } = useUsersStore();
 
 function millisecondsToStr(epochTime) {
   // adapted from https://stackoverflow.com/a/8212878/13886854
@@ -64,7 +66,7 @@ const upvote = async () => {
       {}, // post requests need body, config is 3rd parameter
       {
         headers: {
-          Authorization: "Bearer " + sessionStorage.token,
+          Authorization: "Bearer " + token,
         },
       }
     );
@@ -84,13 +86,12 @@ const upvote = async () => {
 const downvote = async () => {
   try {
     voting.value = true;
-
     const { data } = await axios.post(
       `${API_URL}/posts/${props.post.id}/downvote`,
       {}, // post requests need body, config is 3rd parameter
       {
         headers: {
-          Authorization: "Bearer " + sessionStorage.token,
+          Authorization: "Bearer " + token,
         },
       }
     );
@@ -109,7 +110,7 @@ const downvote = async () => {
 </script>
 
 <template>
-  <section>
+  <article>
     <table cellspacing="0" cellpadding="0">
       <tr>
         <td>
@@ -144,7 +145,8 @@ const downvote = async () => {
       {{ post.content }}
     </p>
     <p>{{ millisecondsToStr(post.creation_date) }} ago</p>
-  </section>
+  </article>
+  <br />
 </template>
 
 <style>
@@ -161,5 +163,9 @@ button {
 
 .voted {
   background-color: orange;
+}
+
+article {
+  word-wrap: break-word;
 }
 </style>

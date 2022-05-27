@@ -1,33 +1,20 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
 import router from "../router";
-
-// FIXME: find way to store this globally
-//        maybe use state management framework (pinia?)
-const API_URL = import.meta.env.VITE_API_URL;
+import { useUsersStore } from "../stores/users";
 
 const usernameModel = ref("");
 const passwordModel = ref("");
 
+const { loginUser } = useUsersStore();
+
 const login = async () => {
-  if (passwordModel.value.length === 0) {
-    alert("Passwords do not match");
-    return;
-  }
-
   try {
-    const res = await axios.post(`${API_URL}/users/login`, {
-      username: usernameModel.value,
-      password: passwordModel.value,
-    });
-
-    // store token in session storage
-
-    sessionStorage.token = res.data.token;
+    await loginUser(usernameModel.value, passwordModel.value);
     router.push("dashboard");
   } catch (error) {
-    alert("Incorrect username and/or password");
+    console.log(error);
+    alert("Invalid username and/or password");
   }
 };
 </script>
