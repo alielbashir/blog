@@ -14,12 +14,11 @@ git clone https://github.com/alielbashir/blog
 cd backend
 python3 -m pip install poetry
 ```
-3. Install the dependencies using poetry and activate the venv
+3. Install the dependencies using poetry
 ```
-poetry install
-poetry shell
+python3 -m poetry install
 ```
 4. Run the server with uvicorn
 ```
-uvicorn src.main:app
+python3 -m poetry run uvicorn src.main:app
 ```
